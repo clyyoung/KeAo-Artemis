@@ -2,6 +2,9 @@
 #include <vector>
 #include <artemis_channels.h>
 #include <support/datalib.h>
+#include <i2c_lib.h>
+
+#define SLAVE_ADDRESS 0x08
 
 /* Helper Function Defs */
 bool setup_magnetometer(void);
@@ -41,28 +44,33 @@ std::vector<struct thread_struct> thread_list;
 
 Cosmos::Support::PacketComm packet;
 
+using namespace Artemis;
+
 void setup()
 {
   Serial.begin(115200);
   delay(3000);
 
-  setup_magnetometer();
-  setup_imu();
-  setup_current();
+  Artemis::Teensy::Artemis_I2C::init(&I2C_Wire1, SLAVE_ADDRESS);
+
+  //setup_magnetometer();
+  //setup_imu();
+  //setup_current();
 
   // Threads
   // thread_list.push_back({threads.addThread(Artemis::Teensy::Channels::rfm23_channel), "rfm23 thread"});
   // thread_list.push_back({threads.addThread(Artemis::Teensy::Channels::rfm98_channel), "rfm98 thread"});
   // thread_list.push_back({threads.addThread(Artemis::Teensy::Channels::pdu_channel), "pdu thread"});
-  thread_list.push_back({threads.addThread(Artemis::Teensy::Channels::astrodev_channel), "astrodev thread"});
+  //thread_list.push_back({threads.addThread(Artemis::Teensy::Channels::astrodev_channel), "astrodev thread"});
 }
 
 void loop()
 {
-  if (main_queue.size() > 0)
+  /*if (main_queue.size() > 0)
   {
     packet.PullQueue(main_queue, main_queue_mtx);
-  }
+  }*/
+  Artemis::Teensy::Artemis_I2C::sendData();
 }
 
 /* Helper Functions */
